@@ -71,7 +71,7 @@ const refs = {
   overlay: document.querySelector(".lightbox__overlay"),
   closeBtn: document.querySelector('[data-action="close-lightbox"]'),
 };
-
+let IMAGE_INDEX = 0;
 //============== разметка ===============
 
 const galleryMarkup = galleryItems
@@ -81,3 +81,61 @@ const galleryMarkup = galleryItems
   )
   .join("");
 refs.gallery.innerHTML = galleryMarkup;
+
+
+// =========== modal open ===========
+const imageArr = [...document.querySelectorAll(".gallery__image")];
+
+refs.gallery.addEventListener("click", onOpenModal);
+
+function onOpenModal(e) {
+  e.preventDefault();
+  if (!e.target.classList.contains("gallery__image")) {
+    return;
+  }
+
+  refs.lightbox.classList.add("is-open");
+  refs.lightbox__image.src = e.target.dataset.source;
+  refs.lightbox__image.alt = e.target.alt;
+
+  IMAGE_INDEX = imageArr.indexOf(e.target);
+
+  window.addEventListener("keydown", onKeyPressModal);
+}
+
+// =========== modal close ===========
+refs.closeBtn.addEventListener("click", onCloseModal);
+refs.overlay.addEventListener("click", onCloseModal);
+
+function onCloseModal() {
+  refs.lightbox.classList.remove("is-open");
+  refs.lightbox__image.src = "";
+  refs.lightbox__image.alt = "";
+
+  window.removeEventListener("keydown", onKeyPressModal);
+  IMAGE_INDEX = 0;
+}
+// ======== keys =============
+function onKeyPressModal(e) {
+  switch (e.code) {
+    case "Escape":
+      onCloseModal();
+      break;
+    case "ArrowRight":
+      IMAGE_INDEX += 1;
+      if (IMAGE_INDEX === galleryItems.length) {
+        IMAGE_INDEX = 0;
+      }
+      refs.lightbox__image.src = galleryItems[IMAGE_INDEX].original;
+      refs.lightbox__image.alt = galleryItems[IMAGE_INDEX].description;
+      break;
+    case "ArrowLeft":
+      IMAGE_INDEX -= 1;
+      if (IMAGE_INDEX < 0) {
+        IMAGE_INDEX = galleryItems.length - 1;
+      }
+      refs.lightbox__image.src = galleryItems[IMAGE_INDEX].original;
+      refs.lightbox__image.alt = galleryItems[IMAGE_INDEX].description;
+      break;
+  }
+}
