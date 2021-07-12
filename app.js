@@ -82,23 +82,22 @@ const galleryMarkup = galleryItems
   .join("");
 refs.gallery.innerHTML = galleryMarkup;
 
-
 // =========== modal open ===========
 const imageArr = [...document.querySelectorAll(".gallery__image")];
 
 refs.gallery.addEventListener("click", onOpenModal);
 
-function onOpenModal(e) {
-  e.preventDefault();
-  if (!e.target.classList.contains("gallery__image")) {
+function onOpenModal(event) {
+  event.preventDefault();
+  if (!event.target.classList.contains("gallery__image")) {
     return;
   }
 
   refs.lightbox.classList.add("is-open");
-  refs.lightbox__image.src = e.target.dataset.source;
-  refs.lightbox__image.alt = e.target.alt;
+  refs.lightbox__image.src = event.target.dataset.source;
+  refs.lightbox__image.alt = event.target.alt;
 
-  IMAGE_INDEX = imageArr.indexOf(e.target);
+  IMAGE_INDEX = imageArr.indexOf(event.target);
 
   window.addEventListener("keydown", onKeyPressModal);
 }
@@ -114,28 +113,4 @@ function onCloseModal() {
 
   window.removeEventListener("keydown", onKeyPressModal);
   IMAGE_INDEX = 0;
-}
-// ======== keys =============
-function onKeyPressModal(e) {
-  switch (e.code) {
-    case "Escape":
-      onCloseModal();
-      break;
-    case "ArrowRight":
-      IMAGE_INDEX += 1;
-      if (IMAGE_INDEX === galleryItems.length) {
-        IMAGE_INDEX = 0;
-      }
-      refs.lightbox__image.src = galleryItems[IMAGE_INDEX].original;
-      refs.lightbox__image.alt = galleryItems[IMAGE_INDEX].description;
-      break;
-    case "ArrowLeft":
-      IMAGE_INDEX -= 1;
-      if (IMAGE_INDEX < 0) {
-        IMAGE_INDEX = galleryItems.length - 1;
-      }
-      refs.lightbox__image.src = galleryItems[IMAGE_INDEX].original;
-      refs.lightbox__image.alt = galleryItems[IMAGE_INDEX].description;
-      break;
-  }
 }
